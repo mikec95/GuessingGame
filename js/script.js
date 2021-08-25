@@ -13,8 +13,6 @@ let body = document.querySelector("body");
 let secretNumElement = document.querySelector(".number");
 let message = document.querySelector(".message");
 
-secretNumElement.innerHTML = secretNum;
-
 function processInput(input) {
   // Convert string to number, just in case
   input = Number(input);
