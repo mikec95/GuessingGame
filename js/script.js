@@ -3,7 +3,7 @@
 /** Game Data */
 let secretNum = Math.floor(Math.random() * 20) + 1;
 let score = 20;
-let highscore = 0;
+let highScore = 0;
 
 /** DOM elements */
 let scoreElement = document.querySelector(".score");
@@ -13,9 +13,47 @@ let body = document.querySelector("body");
 let secretNumElement = document.querySelector(".number");
 let message = document.querySelector(".message");
 
+secretNumElement.innerHTML = secretNum;
+
+function processInput(input) {
+  // Convert string to number, just in case
+  input = Number(input);
+
+  // Check if entry is valid first. Check for empty or null input.
+  if (!input) message.textContent = "Please input something";
+
+  // Only execute if users guess is between 1 and 20
+  if (input <= 20 && input >= 1) {
+    // When guess is correct.
+    if (input === secretNum) {
+      score++;
+      message.innerHTML = "You Win!";
+      secretNumElement.style.width = "30rem";
+      body.style.backgroundColor = "#60b347";
+
+      // Check for highscore and set
+      if (score > highScore) highScore = score;
+
+      // When guess is incorrect
+    } else if (input !== secretNum) {
+      if (score > 1) {
+        score--;
+        message.innerHTML = input > secretNum ? "Too high" : "Too low";
+      } else {
+        score = 0;
+        message.innerHTML = "You lost";
+        body.style.backgroundColor = "red";
+      }
+    }
+  } else {
+    message.innerHTML = "Between 1 and 20";
+  }
+  scoreElement.innerHTML = score;
+  highScoreElement.innerHTML = highScore;
+}
+
 document.querySelector(".check").addEventListener("click", function () {
-  let guessElement = document.querySelector(".guess");
-  let guess = Number(guessElement.value);
+  let guess = userGuessInput.value;
   processInput(guess);
 });
 
@@ -25,66 +63,10 @@ document.querySelector(".again").addEventListener("click", function () {
   score = 20;
   secretNum = Math.trunc(Math.random() * 20) + 1;
 
-  document.querySelector("body").style.backgroundColor = "#222";
-  document.querySelector(".number").textContent = "?";
-  document.querySelector(".message").textContent = "Start guessing...";
-  document.querySelector(".guess").value = "";
-  document.querySelector(".score").textContent = score;
-});
-
-function processInput(input) {
-  // Check if entry is valid first. Check for empty or null input.
-  let sanity =
-    !input || input === "" || input === null
-      ? "Please input something"
-      : input < 0 || input > 20
-      ? "Between 1 and 20!"
-      : "";
-  messageElement.textContent = sanity;
-
-  // When guess is correct.
-  if (input === secretNum) {
-    youWon();
-
-    // When guess is wrong
-  } else if (input !== secretNum) {
-    if (score > 1) {
-      document.querySelector("body").style.backgroundColor = "#222";
-      let message = input < secretNum ? "Too low" : "Too high";
-      score--;
-      messageElement.textContent = message;
-    } else {
-      youLost();
-    }
-    scoreElement.textContent = score;
-  }
-}
-
-// Sets UI and score to show a loss
-function youLost() {
-  score = 0;
-  document.querySelector(".message").textContent = "You lose..";
-  document.querySelector(".number").textContent = secretNum;
-  document.querySelector("body").style.backgroundColor = "#ff0000";
-  document.querySelector(".number").style.width = "30rem";
-}
-
-// Sets UI and score to show a win. Also includes check for highscore.
-// Reset secretNumber after for a new session
-function youWon() {
-  score++;
-
-  // Update UI
+  body.style.backgroundColor = "#222";
+  secretNumElement.textContent = "?";
+  message.textContent = "Start guessing...";
+  userGuessInput.value = "";
+  secretNumElement.style.width = "15rem";
   scoreElement.textContent = score;
-  messageElement.textContent = "Correct!";
-  numberElement.textContent = secretNum;
-  document.querySelector("body").style.backgroundColor = "#60b347";
-  document.querySelector(".number").style.width = "30rem";
-
-  // Check for high sore and display high score
-  if (score > highScore) highScore = score;
-  highScoreElement.textContent = highScore;
-
-  // Reset secret number once it's guessed
-  secretNum = Math.trunc(Math.random() * 20) + 1;
-}
+});
